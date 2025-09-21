@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # MySQL Database for Development
+  mysql:
+    image: mysql:8.0
+    container_name: freelancer-mysql-dev
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: freelancer_marketplace_dev
+      MYSQL_USER: freelancer_user
+      MYSQL_PASSWORD: freelancer_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_dev_data:/var/lib/mysql
+      - ./scripts:/docker-entrypoint-initdb.d
+    networks:
+      - freelancer-dev-network
+
+  # Redis for Development
+  redis:
+    image: redis:7-alpine
+    container_name: freelancer-redis-dev
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - freelancer-dev-network
+
+  # Adminer for Database Management
+  adminer:
+    image: adminer
+    container_name: freelancer-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - freelancer-dev-network
+
+volumes:
+  mysql_dev_data:
+  redis_dev_data:
+
+networks:
+  freelancer-dev-network:
+    driver: bridge
