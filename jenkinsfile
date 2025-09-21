@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs "NodeJS16"   // Change this name to the NodeJS version you configured in Jenkins
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Hemanth220524/cicdclassproject-.git'
+            }
+        }
+
+        stage('Show Node Version') {
+            steps {
+                sh 'node -v'
+                sh 'npm -v'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'npm run build'
+            }
+        }
+
+        stage('Start Application') {
+            steps {
+                // Run the app in background so the pipeline doesn’t hang
+                sh 'nohup npm run start &'
+            }
+        }
+    }
+}
